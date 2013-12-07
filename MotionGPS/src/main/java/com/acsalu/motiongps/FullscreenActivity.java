@@ -36,9 +36,6 @@ public class FullscreenActivity extends Activity implements LocationListener, Se
     private TextView mGyroyTextView;
     private TextView mGyrozTextView;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +43,19 @@ public class FullscreenActivity extends Activity implements LocationListener, Se
 
         findViews();
 
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         Criteria criteria = new Criteria();
-        mLocationProvider = mLocationManager.getBestProvider(criteria, false);
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(true);
+        criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
+
+        mLocationProvider = mLocationManager.getBestProvider(criteria, true);
+        Log.d("location", "provider: " + mLocationProvider);
         Location location = mLocationManager.getLastKnownLocation(mLocationProvider);
+
+
 
         if (location != null) {
             Log.d("Location", "Provider " + mLocationProvider + " has been selected");
@@ -93,6 +99,8 @@ public class FullscreenActivity extends Activity implements LocationListener, Se
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("location", "changed");
+
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         mLatitudeTextView.setText(String.valueOf(latitude));
